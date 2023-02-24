@@ -1,0 +1,48 @@
+﻿@model Broadpost.Models.Channel
+
+@{
+    ViewData["Title"] = "Edit Channel";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h2>Edit Channel</h2>
+<span class="text-danger">@ViewBag.Message</span>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditChannel">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ChannelId" />
+            <input type="hidden" asp-for="UserId" />
+            <div class="form-group">
+                <label asp-for="ChannelName" class="control-label"></label>
+                <input asp-for="ChannelName" class="form-control" />
+                <span asp-validation-for="ChannelName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label"></label>
+                <input asp-for="Tags" placeholder="Add Tags Eg. Food,Choco,Fun..." class="form-control" />
+                <span asp-validation-for="Tags" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChannelDesc" class="control-label"></label>
+                <textarea asp-for="ChannelDesc" class="form-control"></textarea>
+                <span asp-validation-for="ChannelDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div>
+    <a asp-controller="Channel" asp-action="Index">&#8592;back</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

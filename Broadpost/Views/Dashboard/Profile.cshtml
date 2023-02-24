@@ -1,0 +1,39 @@
+﻿@model Broadpost.Models.User
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h3>Profile</h3>
+<hr />
+
+<div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="..." class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <p><strong>@Html.DisplayNameFor(model => model.Email): </strong>@Html.DisplayFor(model => model.Email)</p>
+                <p><strong>@Html.DisplayNameFor(model => model.Region): </strong>@Html.DisplayFor(model => model.Region)</p>
+                <p><strong>@Html.DisplayNameFor(model => model.Name): </strong>@Html.DisplayFor(model => model.Name)</p>
+                <p><strong>@Html.DisplayNameFor(model => model.UserName): </strong>@Html.DisplayFor(model => model.UserName)</p>
+                <p><strong>@Html.DisplayNameFor(model => model.Gender): </strong>@Html.DisplayFor(model => model.Gender)</p>
+                <p><strong>@Html.DisplayNameFor(model => model.Age): </strong>@Html.DisplayFor(model => model.Age)</p>
+                <span class="card-texttext-muted">
+                    <small>
+                        @Html.DisplayNameFor(model => model.CreatedAt): @Html.DisplayFor(model => model.CreatedAt) |
+                        @Html.DisplayNameFor(model => model.UpdatedAt): @Html.DisplayFor(model => model.UpdatedAt)
+                    </small>
+                    <small class="d-block">
+                        <a asp-controller="Dashboard" asp-action="EditProfile" asp-route-id="@Model.UserId"><span class="btn btn-dark btn-sm">Edit</span></a>
+                        <a asp-controller="Dashboard" asp-action="ChangePassword" asp-route-id="@Model.UserId"><span class="btn btn-secondary btn-sm">Change Password</span></a>
+                    </small>
+                </span> 
+            </div>
+        </div>
+    </div>
+</div>
+
+

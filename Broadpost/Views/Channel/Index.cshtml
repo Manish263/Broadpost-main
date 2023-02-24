@@ -1,0 +1,192 @@
+﻿
+@{
+    ViewData["Title"] = "Channels";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<h3>Channels</h3>
+
+<p>
+    <a asp-controller="Channel" asp-action="CreateChannel">Create New Channel</a>
+</p>
+<hr />
+
+
+<div class="row">
+
+    <div class="col-sm-6">
+        <h4>Personal Channels</h4>
+        <div class="list-group list-group-flush">
+            @foreach (var item in ViewBag.ChannelCreatedAndJoinedList[0])
+            {
+                <div class="list-group-item">
+                    <span class="float-right">
+                        <a asp-controller="Channel" asp-action="EditChannel" asp-route-id="@item.ChannelId" class="bi-pen"></a> |
+                        <a style="cursor:pointer" onclick="ConfirmDelete(@item.ChannelId)" class="bi-archive-fill text-info"></a>
+                    </span>
+                    <a asp-controller="Post" asp-action="SetChannelId" asp-route-id="@item.ChannelId" class="list-group-item-action text-secondary">
+                        <h5 class="mb-1">@item.ChannelName</h5>
+                        <h5 class="small font-italic">@item.CreatedAt</h5>
+                        <h5 class="small font-italic">
+                            Total Users: @item.TotalUser 
+                            Total Posts: @item.TotalPost
+                        </h5>
+                        <p class="mb-1">@item.ChannelDesc</p>
+                    </a>
+                    <small class="d-block">
+                        <span class="btn btn-outline-secondary btn-sm bi bi-person-plus-fill" onclick="openModal(@item.ChannelId)" data-toggle="modal" data-target="#inviteModalLong" style="cursor:pointer"> Invite</span>
+                    </small>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <h4>Channels joined</h4>
+        <div class="list-group list-group-flush">
+            @foreach (var item in ViewBag.ChannelCreatedAndJoinedList[1])
+            {
+                <div class="list-group-item">
+                    <a asp-controller="Post" asp-action="SetChannelId" asp-route-id="@item.ChannelId" class="list-group-item-action text-secondary">
+                        <h5 class="mb-1">@item.ChannelName</h5>
+                        <h5 class="small font-italic">@item.CreatedAt</h5>
+                        <h5 class="small font-italic">
+                            Total Users: @item.TotalUser
+                            Total Posts: @item.TotalPost
+                        </h5>
+                        <p class="mb-1">@item.ChannelDesc</p>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="inviteModalLong" tabindex="-1" role="dialog" aria-labelledby="inviteModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inviteModalLongTitle">Invite Users</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <!--modal body-->
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div> 
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+    //confirm delete
+    function ConfirmDelete(channelId) {
+        if (confirm("Are you sure you want to delete?")) {
+            window.location.href = '/Channel/DeleteChannel/' + channelId;
+        }
+    }
+
+
+    //open modal
+    function openModal(channelId) {
+        var request = new XMLHttpRequest();
+        request.addEventListener("load", function (event) {
+            //console.log(JSON.parse(event.target.responseText));
+            let obj = JSON.parse(event.target.responseText);
+
+            addDataToModal(obj,channelId); //calling addDataToModal
+            
+        })
+        var data = {
+            channelId: `${channelId}`
+        }
+        request.open("POST", "User/getChannelUsers");
+        request.setRequestHeader("Content-type", "application/json");
+        request.send(JSON.stringify(data));
+    }
+
+    //add data to modal
+    function addDataToModal(obj,channelId)
+    {
+        let modalBody = document.getElementById("modalBody");
+
+        modalBody.innerHTML = '';
+        var ul = document.createElement("ul");
+        ul.setAttribute("class", "list-group");
+        for (let i in obj) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "list-group-item");
+            li.innerHTML = obj[i].Name;
+
+            var inviteBtn = document.createElement("button");
+            inviteBtn.setAttribute("class", "bi bi-person-plus text-success float-right");
+            inviteBtn.setAttribute("id", obj[i].UserId);
+            inviteBtn.innerHTML = " Invite";
+            inviteBtn.style.border = "none";
+            inviteBtn.style.background = "none";
+            li.appendChild(inviteBtn);
+
+            inviteBtn.addEventListener("click", () => {
+                inviteBtn.innerHTML = " Invited";
+                inviteBtn.disabled = true;
+                sendInvitation(obj[i].UserId, channelId, inviteBtn); //calling sendInvitation
+            })
+
+
+            ul.appendChild(li);
+
+        }
+        modalBody.appendChild(ul);
+    }
+
+    //send Invitation
+    function sendInvitation(userId, channelId, inviteBtn)
+    {
+        var data =
+        {
+            ReceverUserId: `${userId}`,
+            ChannelId: `${channelId}`
+        }
+
+        //$.ajax({
+        //    "type": "POST",
+        //    "url": '/Invitation/Invite',
+        //    "dataType": "json",
+        //    "contentType": "application/json",
+        //    "data": JSON.stringify(data)
+        //}).done(function (data) { alert("success"); })
+        //    .fail(function () { alert("error"); })
+        //    .always(function () { alert("complete"); });
+
+
+        var request = new XMLHttpRequest();
+        request.addEventListener("load", function (event) {
+            console.log(event.target.responseText);
+            //inviteBtn.innerHTML = "Invited";
+            //inviteBtn.disabled = true;
+
+        })
+        request.open("POST", "/Invitation/Invite");
+        request.setRequestHeader("Content-type", "application/json");
+        request.send(JSON.stringify(data));
+    }
+
+</script>
+
+
+

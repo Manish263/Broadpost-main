@@ -1,0 +1,42 @@
+﻿
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h3>Invitations</h3>
+<hr />
+
+<ul class="list-group">
+    @foreach (var item in ViewBag.invitations)
+    {
+        <li class="list-group-item list-group-item-success">
+            <h5>@item.ChannelName</h5>
+            <small class="text-muted"><b>@item.Admin</b> have sent you request to join his channel</small>
+            <span class="float-right">
+                <button class="btn btn-sm btn-success text-white" onclick="AcceptDeclineInvitation(this.parentNode.parentNode.style.display = 'none',@item.ChannelId, 1)">Accept</button>
+                <button class="btn btn-sm btn-danger text-white" onclick="AcceptDeclineInvitation(this.parentNode.parentNode.style.display = 'none',@item.ChannelId, 2)">Decline</button>
+            </span>
+        </li>
+    }
+</ul>
+
+<script>
+    function AcceptDeclineInvitation(e,channelId,status)
+    {
+        var data =
+        {
+            ChannelId: `${channelId}`,
+            Status: `${status}`
+        }
+        $.ajax({
+            "type": "POST",
+            "url": '/Invitation/HandleInviteResponse',
+            "dataType": "json",
+            "contentType": "application/json",
+            "data": JSON.stringify(data)
+        })
+
+    }
+</script>

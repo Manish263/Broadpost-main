@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Broadpost.Models.Post>
+
+@{
+    ViewData["Title"] = "Posts";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h3>@ViewBag.ChannelName</h3>
+
+<p>
+    <a asp-action="CreatePost">Create New Post</a>
+</p>
+
+@foreach (var item in ViewBag.postsInfo)
+{
+    <div class="card" >
+        <div class="card-body">
+            <span class="float-right">
+                <a asp-controller="Post" asp-action="EditPost" asp-route-id="@item.post.PostId" class="bi-pen"></a> |
+                <a style="cursor:pointer" onclick="ConfirmDelete(@item.post.PostId)" class="bi-archive-fill text-danger"></a>
+            </span>
+            <h5 class="card-title">@item.userName</h5>
+            <h6 class="card-subtitle mb-2 text-muted"><small>@item.post.CreatedAt</small></h6>
+            <p class="card-text">@item.post.PostMessage</p>
+        </div>
+    </div>
+}
+
+<script>
+    //confirm delete
+    function ConfirmDelete(postId) {
+        if (confirm("Are you sure you want to delete?")) {
+            window.location.href = '/Post/DeletePost/' + postId;
+        }
+    }
+
+</script>
+
+
